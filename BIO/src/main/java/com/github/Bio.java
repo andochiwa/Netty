@@ -40,9 +40,9 @@ public class Bio {
                     InputStream inputStream = socket.getInputStream();
 
                     int len;
+                    // read方法会阻塞当前线程，如果没有数据可读，则会一直阻塞下去造成线程资源浪费
                     while ((len = inputStream.read(bytes)) != -1) {
                         System.out.println(Thread.currentThread().getName() + " 读取到客户端数据 = " + new String(bytes, 0, len));
-
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
