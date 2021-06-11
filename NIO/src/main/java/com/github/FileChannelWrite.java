@@ -10,7 +10,7 @@ import java.nio.channels.FileChannel;
  * @version 1.0
  * @create 06-12-3:35
  */
-public class FileChannel1 {
+public class FileChannelWrite {
 
     public static void main(String[] args) throws IOException {
         String str = "hello world";
