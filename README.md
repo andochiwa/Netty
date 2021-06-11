@@ -48,6 +48,16 @@ Java共支持3种网络IO模型：BIO、NIO、AIO
 
 Buffer类定义了所有的缓冲区都具有的四个属性来提供关于其所包含的数据元素的信息，例如：缓冲区的容量，终点，当前位置，标记等
 
+## 2. 通道（Channel）
+
+NIO的通道类似于流，有以下区别
+
+* 通道可以进行读写，而流只能读或写
+* 通道可以实现异步读写数据
+* 通道可以从缓冲读数据，也可以写数据到缓冲
+
+Channel是一个接口，常用的实现类有：`FileChannel`, `DatagramChannel`, `ServerSocketChannel`和`SocketChannel`。其中`FIleChannel`用于文件的数据读写，DatagramChannel用于UDP的数据读写，ServerSocketChannel和SocketChannel用于TCP的数据读写
+
 ## Thread, Selector, Channel, Buffer之间的关系
 
 1. 一个Thread对应一个Selector
