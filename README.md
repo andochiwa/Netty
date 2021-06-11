@@ -22,10 +22,19 @@ Java共支持3种网络IO模型：BIO、NIO、AIO
 
 # NIO介绍
 
-Java NIO全称Java Non-Blocking IO，是指jdk提供的新api。从jdk1.4开始，java提供了一系列改进的IO的新特性，被统称为NIO(New IO)，是**同步非阻塞**的
+1. Java NIO全称Java Non-Blocking IO，是指jdk提供的新api。从jdk1.4开始，java提供了一系列改进的IO的新特性，被统称为NIO(New IO)，是**同步非阻塞**的
+2. NIO相关的类都被放在java.nio包下，并且对原java.io包中的很多类都进行了改写
+3. NIO有三大核心部分：**Channel（通道），Buffer（缓冲区），Selector（选择器）**
+4. NIO是**面向缓存区**，或者**面向块**编程的。数据读取到一个它稍后处理的缓冲区，需要时可在缓冲区中前后移动，这就增加了处理过程中的灵活性，使用它可以提供非阻塞性的高伸缩性网络
+5. NIO的非阻塞模式是一个线程从某通道发送或读取数据时，仅得到当前可用的数据，如果没有可用的数据就什么都不会获取，**而不是保持线程阻塞**。所以直到数据可用之前，线程可以继续做其他的事情。
+6. HTTP2.0使用了多路复用的技术，做到同一个连接并发处理多个请求，而且并发请求的数量比HTTP1.1大了好几个数量级
 
-NIO相关的类都被放在java.nio包下，并且对原java.io包中的很多类都进行了改写
+## Thread, Selector, Channel, Buffer之间的关系
 
-NIO有三大核心部分：**Channel（通道），Buffer（缓冲区），Selector（选择器）**
-
-NIO是**面向缓存区**，或者**面向块**编程的。数据读取到一个它稍后处理的缓冲区，需要时可在缓冲区中前后移动，这就增加了处理过程中的灵活性，使用它可以提供非阻塞性的高伸缩性网络
+1. 一个Thread对应一个Selector
+2. 一个Selector对应多个Channel
+3. 一个Channel对应一个Buffer
+4. 程序切换到哪个Channel是由事件(Event)决定的，Selector会根据不同的事件，在各个通道上切换
+5. Buffer就是一个内存块，低层维护了一个数组
+6. 数据的读写是通过Buffer，与BIO通过流不同，NIO的Buffer可以读也可以写，用Flip方法切换
+7. Channel是双向的，可以返回低层操作系统的情况
