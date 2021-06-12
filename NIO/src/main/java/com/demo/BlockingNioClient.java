@@ -3,6 +3,7 @@ package com.demo;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
 
 /**
  * @author HAN
@@ -14,6 +15,10 @@ public class BlockingNioClient {
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.connect(new InetSocketAddress("localhost", 9876));
 
+        socketChannel.write(Charset.defaultCharset().encode("before"));
+
         System.in.read();
+
+        socketChannel.write(Charset.defaultCharset().encode("after"));
     }
 }
