@@ -58,6 +58,16 @@ NIO的通道类似于流，有以下区别
 
 Channel是一个接口，常用的实现类有：`FileChannel`, `DatagramChannel`, `ServerSocketChannel`和`SocketChannel`。其中`FIleChannel`用于文件的数据读写，DatagramChannel用于UDP的数据读写，ServerSocketChannel和SocketChannel用于TCP的数据读写
 
+### FileChannel
+
+> 注意：FileChannel只能工作在阻塞模式中
+
+`FileChannel`不能直接打开，必须用过`FileInputStream`、`FileOutputStream`、`RandomAccessFile`来获取`FileChannel`，他们都有`getChannel`方法
+
+* 通过`FileInputStream`获取的Channel只能读
+* 通过`FileOutputStream`获取的Channel只能写
+* 通过`RandomAccessFile`获取的channel根据构造`RandomAccessFile`时的读写模式决定是否可读可写
+
 ## Thread, Selector, Channel, Buffer之间的关系
 
 1. 一个Thread对应一个Selector
