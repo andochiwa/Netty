@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
+import java.util.Scanner;
 
 /**
  * @author HAN
@@ -15,11 +16,13 @@ public class BlockingNioClient {
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.connect(new InetSocketAddress("localhost", 9876));
 
-        socketChannel.write(Charset.defaultCharset().encode("before"));
+        socketChannel.write(Charset.defaultCharset().encode("before\n"));
 
+        Scanner scanner = new Scanner(System.in);
+        String s = scanner.next() + '\n';
+
+        socketChannel.write(Charset.defaultCharset().encode(s));
         System.in.read();
-
-        socketChannel.write(Charset.defaultCharset().encode("after"));
         socketChannel.close();
     }
 }

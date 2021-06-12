@@ -68,7 +68,24 @@ Channel是一个接口，常用的实现类有：`FileChannel`, `DatagramChannel
 * 通过`FileOutputStream`获取的Channel只能写
 * 通过`RandomAccessFile`获取的channel根据构造`RandomAccessFile`时的读写模式决定是否可读可写
 
-## 3. Thread, Selector, Channel, Buffer之间的关系
+## 3. 选择器（Selector）
+
+Selector负责监听事件，然后分发给Channel
+
+Channel注册到Selector时，需要保证是非阻塞的，即调用方法`configureBlocking(false)`
+
+### accept处理
+
+从accpet中获得的Channel注册进Selector之后，即可读取数据
+
+### read处理
+
+read需要注意错误处理，有如下两种情况
+
+* 客户端异常关闭，则会抛出异常，如果没有处理则会直接中断线程，所以要捕获异常然后把key给`cancel`掉
+* 客户端正常关闭，会返回-1，如果没有处理，因为key没有被删掉所以会一直循环下去，所以需要判断返回值
+
+## 4. Thread, Selector, Channel, Buffer之间的关系
 
 1. 一个Thread对应一个Selector
 2. 一个Selector对应多个Channel
