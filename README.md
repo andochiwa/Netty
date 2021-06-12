@@ -68,7 +68,7 @@ Channel是一个接口，常用的实现类有：`FileChannel`, `DatagramChannel
 * 通过`FileOutputStream`获取的Channel只能写
 * 通过`RandomAccessFile`获取的channel根据构造`RandomAccessFile`时的读写模式决定是否可读可写
 
-## Thread, Selector, Channel, Buffer之间的关系
+## 3. Thread, Selector, Channel, Buffer之间的关系
 
 1. 一个Thread对应一个Selector
 2. 一个Selector对应多个Channel
