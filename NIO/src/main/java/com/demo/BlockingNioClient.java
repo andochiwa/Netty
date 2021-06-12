@@ -20,5 +20,6 @@ public class BlockingNioClient {
         System.in.read();
 
         socketChannel.write(Charset.defaultCharset().encode("after"));
+        socketChannel.close();
     }
 }

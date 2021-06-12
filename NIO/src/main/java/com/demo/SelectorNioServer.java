@@ -50,8 +50,14 @@ public class SelectorNioServer {
                     System.out.println("read event");
                     try {
                         SocketChannel channel = (SocketChannel) key.channel();
-                        // 这个方法会在客户端关闭后抛出异常
-                        channel.read(buffer);
+                        // 这个方法会在客户端异常关闭后抛出异常
+                        int read = channel.read(buffer);
+                        // 如果客户端正常关闭就会返回-1，这时候也需要删掉key
+                        if (read == -1) {
+                            System.out.println("client close normally......");
+                            key.cancel();
+                            continue;
+                        }
                         buffer.flip();
                         while (buffer.hasRemaining()) {
                             System.out.print((char) buffer.get());
@@ -60,7 +66,7 @@ public class SelectorNioServer {
                         buffer.clear();
                     } catch (IOException e) {
                         // 为了防止抛出异常导致程序中断，需要补货并且把这个key给取消掉
-                        System.out.println("client close");
+                        System.out.println("client close abnormally......");
                         key.cancel();
                     }
                 }
