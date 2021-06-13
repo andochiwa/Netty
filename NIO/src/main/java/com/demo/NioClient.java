@@ -16,13 +16,13 @@ public class NioClient {
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.connect(new InetSocketAddress("localhost", 9876));
 
-        socketChannel.write(Charset.defaultCharset().encode("before\n"));
+        socketChannel.write(Charset.defaultCharset().encode("before"));
 
         Scanner scanner = new Scanner(System.in);
-        String s = scanner.next() + '\n';
-
-        socketChannel.write(Charset.defaultCharset().encode(s));
-        System.in.read();
+        String s;
+        while (!(s = scanner.next()).equals("0")) {
+            socketChannel.write(Charset.defaultCharset().encode(s));
+        }
         socketChannel.close();
     }
 }

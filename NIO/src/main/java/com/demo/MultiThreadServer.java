@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author HAN
@@ -20,8 +23,13 @@ public class MultiThreadServer {
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         serverSocketChannel.bind(new InetSocketAddress(9876));
 
-        Worker worker = new Worker();
-
+        // 获取cpu核心数
+        int cpuCore = Runtime.getRuntime().availableProcessors();
+        List<Worker> workers = new ArrayList<>();
+        for (int i = 0; i < cpuCore; i++) {
+            workers.add(new Worker());
+        }
+        AtomicInteger index = new AtomicInteger(0);
         while (true) {
             selector.select();
             for (var iter = selector.selectedKeys().iterator(); iter.hasNext(); ) {
@@ -31,10 +39,8 @@ public class MultiThreadServer {
                     SocketChannel socketChannel = serverSocketChannel.accept();
                     socketChannel.configureBlocking(false);
                     System.out.println(Thread.currentThread().getName() + " connected...... " + socketChannel.getRemoteAddress());
-                    System.out.println(Thread.currentThread().getName() + " before register...... " + socketChannel.getRemoteAddress());
                     // 与worker关联
-                    worker.register(socketChannel);
-                    System.out.println(Thread.currentThread().getName() + " after register...... " + socketChannel.getRemoteAddress());
+                    workers.get(index.getAndIncrement() % workers.size()).register(socketChannel);
 
                 }
             }
@@ -43,7 +49,6 @@ public class MultiThreadServer {
 
     // 检测读写事件
     private static class Worker implements Runnable {
-        private Thread thread;
         private Selector selector;
         private volatile boolean start = false;
         // 线程之间通信
@@ -55,7 +60,7 @@ public class MultiThreadServer {
         // 需要让我们的worker线程来注册selector，而不是主线程
         public void register(SocketChannel socketChannel) throws IOException {
             if (!start) {
-                thread = new Thread(this);
+                Thread thread = new Thread(this);
                 selector = Selector.open();
                 start = true;
                 thread.start();
