@@ -11,7 +11,7 @@ import java.util.Scanner;
  * @version 1.0
  * @create 06-12-23:33
  */
-public class BlockingNioClient {
+public class NioClient {
     public static void main(String[] args) throws IOException {
         SocketChannel socketChannel = SocketChannel.open();
         socketChannel.connect(new InetSocketAddress("localhost", 9876));
