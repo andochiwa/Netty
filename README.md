@@ -191,3 +191,13 @@ Netty本质是一个NIO框架，适用于服务器通讯相关的多种应用场
 * 关闭
   * 同步关闭：`sync()`
   * 异步关闭：`addListener`
+
+## 4. Future & Promise
+
+在异步处理时，经常用到这两个接口
+
+Netty的`Future`和Java的`Future`同名，但是是两个接口。Netty的`Future`继承自jdk的`Future`，而`Promise`又对Netty的`Future`进行了扩展
+
+* jdk的`Future`只能**同步等待**任务结束才能得到结果
+* Netty的`Future`可以同步等待任务结束得到结果，也可以异步得到结果，当然都得等到任务结束
+* Netty的`Promise`不仅有Netty的`Future`的功能，而且脱离了任务独立存在，只作为线程间传递结果的容器
