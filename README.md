@@ -139,3 +139,34 @@ Netty本质是一个NIO框架，适用于服务器通讯相关的多种应用场
 * Netty VS 其他网络应用框架
   * Mina由apache维护，将来的3.x版本可能会有较大的重构，破坏API向下兼容性，Netty的开发迭代更迅速，API更简洁，文档更优秀
 
+# Netty 组件
+
+## 1. 大致解析
+
+* `ServerBootStrap`类为Netty的启动器，负责组装Netty的组件，启动服务器等
+* `Channel`可以理解为数据的通道
+* `msg`为流动的数据，最开始输入的是`ByteBuf`，经过`pipeline（流水线）`的加工后会变成其他对象（例如字符串），最后输出又变成`ByeBuf`
+* `handler`为数据的处理工序
+  * 工序有多道，合在一起就是一个`pipeline`，`pipeline`负责发布事件传播给每个`handler`，`handler`对自己可以负责的事件进行处理（重写相应事件的方法）
+  * `handler`又分为`Inbound`和`Outbound`两类
+* `eventLoop`为处理数据的`Worker`
+  * `Worker`可以管理多个`Channel`的IO操作，并且一旦`Worker`绑定了某个`Channel`就无法解除
+  * `Worker`既可以执行IO操作，也可以进行任务处理，每个工人都有任务队列，可以堆放多个待处理任务，任务分为普通任务和定时任务（类似线程池的Worker？）
+  * `Worker`按照`pipeline`顺序，依次按照`handler`的规划处理数据，可以理解为每道工序指定不同的`Worker`
+
+## 2. EventLoop
+
+`EventLoop`本质是一个单线程执行器（同时维护一个`Selector`），里面有run方法处理`Channel`上的IO事件
+
+它的继承关系比较复杂，有两条线路
+
+* 一条线继承于`juc.ScheduledExecutorService`，因此包含`EventLoop`实际上也是个线程池
+* 另一条继承于netty自己的`OrderedEventExecutor`
+  * 提供了`inEventLoop(Thread)`判断一个线程是否属于此`EventLoop`
+  * 提供了parent方法也查找自己属于哪个`EventLoopGroup`
+
+`EventLoopGroup`是一组`EventLoop`，`Channel`一般会调用`EventLoopGroup`的register方法来绑定其中一个`EventLoop`，后续这个`Channel`上的IO事件都由此`EventLoop`来处理
+
+* `EventLoopGroup`继承于netty的`EventExecutorGroup`
+  * 实现了Iterable接口，提供遍历`EventLoop`的能力
+  * 另有next方法获取集合中下一个`EventLoop`
