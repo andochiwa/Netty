@@ -25,12 +25,14 @@ public class HelloClient {
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     // 在连接被建立后调用
                     @Override
-                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                    protected void initChannel(NioSocketChannel ch) {
                         ch.pipeline().addLast(new StringEncoder());
                     }
                 })
                 .connect(new InetSocketAddress(9876))
+                // 阻塞，直到连接建立
                 .sync()
+                // 连接对象
                 .channel()
                 // 向服务器发送数据
                 .writeAndFlush("hello world");
