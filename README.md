@@ -182,3 +182,12 @@ Netty本质是一个NIO框架，适用于服务器通讯相关的多种应用场
 * `pipeline()`方法添加`handler`
 * `write()`方法写入数据但不刷出，需要配合`flush()`
 * `writeAndFlush()`方法将数据写入并刷出
+
+`ChannelFuture`，主要用于获取和关闭`Channel`，有同步和异步两种
+
+* 获取，需要注意`Bootstrap.connect(SocketAddress)`方法是异步的，所以获取时也要注意
+  * 同步获取：调用`sync()`阻塞，等待连接完毕
+  * 异步获取：调用`addListener(CallBack)`把当前future当做回调对象放入参数的接口中
+* 关闭
+  * 同步关闭：`sync()`
+  * 异步关闭：`addListener`
