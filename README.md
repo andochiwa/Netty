@@ -160,7 +160,7 @@ Netty本质是一个NIO框架，适用于服务器通讯相关的多种应用场
 
 它的继承关系比较复杂，有两条线路
 
-* 一条线继承于`juc.ScheduledExecutorService`，因此包含`EventLoop`实际上也是个线程池
+* 一条线继承于`juc.ScheduledExecutorService`，因此`EventLoop`实际上也是个线程池
 * 另一条继承于netty自己的`OrderedEventExecutor`
   * 提供了`inEventLoop(Thread)`判断一个线程是否属于此`EventLoop`
   * 提供了parent方法也查找自己属于哪个`EventLoopGroup`
