@@ -170,3 +170,15 @@ Netty本质是一个NIO框架，适用于服务器通讯相关的多种应用场
 * `EventLoopGroup`继承于netty的`EventExecutorGroup`
   * 实现了Iterable接口，提供遍历`EventLoop`的能力
   * 另有next方法获取集合中下一个`EventLoop`
+
+## 3. Channel
+
+`Channel`的主要作用
+
+* `close()`可以用来关闭`Channel`
+* `closeFuture()` 可以用来处理`Channel`的关闭
+  * `sync()`方法的作用是同步等待`Channel`的关闭
+  * `addListener`方法是异步等待`Channel`关闭
+* `pipeline()`方法添加`handler`
+* `write()`方法写入数据但不刷出，需要配合`flush()`
+* `writeAndFlush()`方法将数据写入并刷出
