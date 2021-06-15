@@ -210,3 +210,12 @@ Netty的`Future`和Java的`Future`同名，但是是两个接口。Netty的`Futu
 * 出站处理器通常为`ChannelOutboundHandlerAdapter`的子类，主要对写回的结果加工
 
 `Channel`就像一个加工车间，`Pipeline`为流水线，`ChannelHandler`就是流水线上的工序，而`ByteBuf`是原材料，经过了很多入站工序和出站工序的加工最终变成产品
+
+`ChannelPipeline`类`ChannelHandler`实例对象的链表容器，用于处理或截获通道的接受的发送，为**责任链模式**的核心组件，会按顺序的组织各个`ChannelHandler`，并在他们之间转发事件，其中有 Inbound 和 OutBound 事件流模型
+
+* Inbound：负责为读取的数据进行加工，会从链表的头部开始遍历，然后由super方法进行责任链数据的传递
+* Outbound：负责为写出的数据进行加工，会从链表的尾部开始遍历，然后由super方法进行责任链数据的传递
+
+## 6. ByteBuf
+
+对字节数据的封装，可以动态扩容
