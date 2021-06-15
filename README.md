@@ -201,3 +201,12 @@ Netty的`Future`和Java的`Future`同名，但是是两个接口。Netty的`Futu
 * jdk的`Future`只能**同步等待**任务结束才能得到结果
 * Netty的`Future`可以同步等待任务结束得到结果，也可以异步得到结果，当然都得等到任务结束
 * Netty的`Promise`不仅有Netty的`Future`的功能，而且脱离了任务独立存在，只作为线程间传递结果的容器
+
+## 5. Handler & Pipeline
+
+`ChannelHandler`用来处理`Channel`上的各种事件，分为入站和出站两种。所有`ChannelHandler`被连成一串，就是`Pipeline`
+
+* 入站处理器通常为`ChannelInboundHandlerAdapter`的子类，主要用来读取客户端数据，写回结果
+* 出站处理器通常为`ChannelOutboundHandlerAdapter`的子类，主要对写回的结果加工
+
+`Channel`就像一个加工车间，`Pipeline`为流水线，`ChannelHandler`就是流水线上的工序，而`ByteBuf`是原材料，经过了很多入站工序和出站工序的加工最终变成产品
