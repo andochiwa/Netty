@@ -219,3 +219,56 @@ Netty的`Future`和Java的`Future`同名，但是是两个接口。Netty的`Futu
 ## 6. ByteBuf
 
 对字节数据的封装，可以动态扩容
+
+### 组成
+
+`ByteBuf`由四个部分组成
+
+* readerIndex: 读指针
+* writerIndex: 写指针
+* capacity: 容量
+* maxCapacity: 最大容量
+
+最开始，读写指针都在0的位置。
+
+写入数据后，写指针会向后移动，如果超过了容量的大小，就会触发扩容（不能超过最大容量）。而写入的部分就可以通过读指针来读取。
+
+读取数据后，读指针会向后移动，已经读过的数据的部分就叫做废弃部分。
+
+这样就不需要手动进行读写切换了，并且容量可以动态伸缩
+
+### 扩容
+
+`ByteBuf`的扩容规则是
+
+* 如果写入后数据大小未超过512，则选择下一个16的整数倍。例如写入后大小为12，则扩容后capacity为16
+* 如果写入后数据大小超过512，则选择下一个2^n，例如写入后大小为513，则扩容后的capacity为1024
+* 扩容容量超过maxCapacity会报异常
+
+### retain & release
+
+由于 Netty 中有堆外内存的`ByteBuf`实现，堆外内存最好的手动释放，而不是等待GC
+
+* `UnpooledHeapByteBuf`使用堆内内存，只需要等待GC即可
+* `UnpooledDirectByteBuf`使用堆外内存，需要用特殊方法来回收
+* `PooledByteBuf`和它的子类使用了池化机制，需要更复杂的规则来回收
+
+> 回收内存的源码实现可以参照下面方法的不同实现
+>
+> ```java
+> protected abstract void deallocate()
+> ```
+
+Netty 采用引用计数法来控制回收内存，每个`ByteBuf`都实现了`ReferenceCounted`接口
+
+* 每个`ByteBuf`对象的引用计数都为1
+* 调用 release 方法计数减1
+* 调用 retain 方法计数加1
+* 当计数为0时，低层内存就会被回收
+
+> 由谁去处理 release
+
+由于 pipeline 的存在，如果让每个`ByteBuf`都去处理一遍 release ，那么就会造成我们的 pipeline 链还未传递处理完成就导致内存被回收了，这样就失去了传递性。
+
+所以，Netty 采用的基本规则是，**谁是最后使用者，谁就负责处理 release**
+
