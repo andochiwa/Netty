@@ -4,6 +4,7 @@ import com.github.util.Utils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -67,10 +68,8 @@ public class NettyToRedis {
                     }
                 })
                 .connect("localhost", 6379)
-                .sync()
-                .channel()
-                .closeFuture()
-                .sync();
-        group.shutdownGracefully();
+                .addListeners(
+                        (ChannelFutureListener) future -> future.channel().closeFuture(),
+                        (ChannelFutureListener) future -> group.shutdownGracefully());
     }
 }
