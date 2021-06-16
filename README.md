@@ -272,3 +272,10 @@ Netty 采用引用计数法来控制回收内存，每个`ByteBuf`都实现了`R
 
 所以，Netty 采用的基本规则是，**谁是最后使用者，谁就负责处理 release**
 
+### ByteBuf优势
+
+* 池化，可以重用池中的 ByteBuf 实例，更节约内存以及提高效率
+* 读写指针分离，不需要像 ByteBuffer 一样切换读写模式
+* 容量动态伸缩
+* 支持链式调用，可以使用的更流畅
+* 很多地方都体现了零拷贝，例如 slice, duplicate, CompositeByteBuf
