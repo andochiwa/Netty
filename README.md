@@ -280,6 +280,4 @@ Netty 采用引用计数法来控制回收内存，每个`ByteBuf`都实现了`R
 * 支持链式调用，可以使用的更流畅
 * 很多地方都体现了零拷贝，例如 slice, duplicate, CompositeByteBuf
 
-# Netty进阶
-
-## 1. 
+## 
